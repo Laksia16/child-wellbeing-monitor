@@ -1,0 +1,294 @@
+--Understanding and Exploring the datasets
+SELECT TOP 100* 
+FROM Child_Welbeing_Monitor.dbo.Ethiopia;
+
+SELECT TOP 100*
+FROM Child_Welbeing_Monitor.dbo.Vietnam;
+
+--Adding Country Column
+--Ethiopia
+ALTER TABLE [dbo].[Ethiopia]
+ADD Country_Name Varchar(50);
+
+--Vietnam
+ALTER TABLE [dbo].[Vietnam]
+ADD Country_Name Varchar(50);
+
+--Creating Table View
+--Ethiopia
+CREATE VIEW Country_Ethiopia AS
+SELECT 
+    COALESCE(NULLIF([Country_Name], ''), 'Ethiopia') AS [Country],
+	COALESCE(NULLIF([childid], ''), 'NA') AS [Child_ID],
+	COALESCE(NULLIF([yc], ''), 'NA') AS [Cohort],
+	COALESCE(NULLIF([agemon], ''), 'NA') AS [Child_Age],
+	COALESCE(NULLIF([wi_new], ''), 'NA') AS [Wealth_Index],
+	COALESCE(NULLIF([hq_new], ''), 'NA') AS [Housing_Quality_Index],
+	COALESCE(NULLIF([sv_new], ''), 'NA') AS [Service_Index_Access],
+	COALESCE(NULLIF([ownlandhse], ''), 'NA') AS [Own_Household_Land],
+	COALESCE(NULLIF([ownhouse], ''), 'NA') AS [Own_House],
+	COALESCE(NULLIF([hschool], ''), 'NA') AS [School_Hours],
+	COALESCE(NULLIF([caredu], ''), 'NA') AS [Eductaion_Level_Child],
+	COALESCE(NULLIF([dadedu], ''), 'NA') AS [Education_Level_Dad],
+	COALESCE(NULLIF([momedu], ''), 'NA') AS [Education_Level_Mom],
+	COALESCE(NULLIF([headedu], ''), 'NA') AS [Education_Level_Head],
+	COALESCE(NULLIF([chrephealth1], ''), 'NA') AS [Child_Health_1],
+	COALESCE(NULLIF([chrephealth2], ''), 'NA') AS [Child_Health_2],
+	COALESCE(NULLIF([chrephealth3], ''), 'NA') AS [Child_Health_3],
+	COALESCE(NULLIF([chrephealth4], ''), 'NA') AS [Child_Health_4],
+	COALESCE(NULLIF([chhealth], ''), 'NA') AS [Child_Health_General],
+	COALESCE(NULLIF([drwaterq_new], ''), 'NA') AS [Water_Quality],
+	COALESCE(NULLIF([chweight], ''), 'NA') AS [Child_Weight],
+	COALESCE(NULLIF([chheight], ''), 'NA') AS [Child_Height],
+	COALESCE(NULLIF([bmi], ''), 'NA') AS [Child_BMI],
+	COALESCE(NULLIF([underweight], ''), 'NA') AS [Child_Underweight]
+FROM Child_Welbeing_Monitor.dbo.Ethiopia;
+
+--Vietnam
+CREATE VIEW Country_Vietnam AS
+SELECT 
+    COALESCE(NULLIF([Country_Name], ''), 'Vietnam') AS [Country],
+	COALESCE(NULLIF([childid], ''), 'NA') AS [Child_ID],
+	COALESCE(NULLIF([yc], ''), 'NA') AS [Cohort],
+	COALESCE(NULLIF([agemon], ''), 'NA') AS [Child_Age],
+	COALESCE(NULLIF([wi_new], ''), 'NA') AS [Wealth_Index],
+	COALESCE(NULLIF([hq_new], ''), 'NA') AS [Housing_Quality_Index],
+	COALESCE(NULLIF([sv_new], ''), 'NA') AS [Service_Index_Access],
+	COALESCE(NULLIF([ownlandhse], ''), 'NA') AS [Own_Household_Land],
+	COALESCE(NULLIF([ownhouse], ''), 'NA') AS [Own_House],
+	COALESCE(NULLIF([hschool], ''), 'NA') AS [School_Hours],
+	COALESCE(NULLIF([caredu], ''), 'NA') AS [Eductaion_Level_Child],
+	COALESCE(NULLIF([dadedu], ''), 'NA') AS [Education_Level_Dad],
+	COALESCE(NULLIF([momedu], ''), 'NA') AS [Education_Level_Mom],
+	COALESCE(NULLIF([headedu], ''), 'NA') AS [Education_Level_Head],
+	COALESCE(NULLIF([chrephealth1], ''), 'NA') AS [Child_Health_1],
+	COALESCE(NULLIF([chrephealth2], ''), 'NA') AS [Child_Health_2],
+	COALESCE(NULLIF([chrephealth3], ''), 'NA') AS [Child_Health_3],
+	COALESCE(NULLIF([chrephealth4], ''), 'NA') AS [Child_Health_4],
+	COALESCE(NULLIF([chhealth], ''), 'NA') AS [Child_Health_General],
+	COALESCE(NULLIF([drwaterq_new], ''), 'NA') AS [Water_Quality],
+	COALESCE(NULLIF([chweight], ''), 'NA') AS [Child_Weight],
+	COALESCE(NULLIF([chheight], ''), 'NA') AS [Child_Height],
+	COALESCE(NULLIF([bmi], ''), 'NA') AS [Child_BMI],
+	COALESCE(NULLIF([underweight], ''), 'NA') AS [Child_Underweight]
+FROM Child_Welbeing_Monitor.dbo.Vietnam;
+
+--Viewing the Views created
+--Ethiopia
+SELECT*
+FROM [dbo].[Country_Ethiopia];
+
+--Vietnam
+SELECT*
+FROM [dbo].[Country_Vietnam];
+
+--Creating seperate views for each poverty index criteria
+--Criteria 1: Income per capita
+CREATE VIEW Income_Per_Capita AS
+SELECT
+	[Country],
+	[Child_ID],
+	[Cohort],
+	[Child_Age],
+	[Wealth_Index],
+	[Housing_Quality_Index],
+	[Service_Index_Access],
+	[Own_Household_Land],
+	[Own_House]
+FROM [dbo].[Country_Ethiopia]
+WHERE 
+	 [Country] != 'NA' AND
+     [Child_ID] != 'NA' AND
+     [Cohort] != 'NA' AND
+     [Child_Age] != 'NA' AND
+     [Wealth_Index] != 'NA' AND
+     [Housing_Quality_Index] != 'NA' AND
+     [Service_Index_Access] != 'NA'AND
+	 [Own_Household_Land] != 'NA' AND
+	 [Own_House] != 'NA'
+UNION ALL
+SELECT 
+[Country],
+	[Child_ID],
+	[Cohort],
+	[Child_Age],
+	[Wealth_Index],
+	[Housing_Quality_Index],
+	[Service_Index_Access],
+	[Own_Household_Land],
+	[Own_House]
+FROM [dbo].[Country_Vietnam]
+WHERE 
+	 [Country] != 'NA' AND
+     [Child_ID] != 'NA' AND
+     [Cohort] != 'NA' AND
+     [Child_Age] != 'NA' AND
+     [Wealth_Index] != 'NA' AND
+     [Housing_Quality_Index] != 'NA' AND
+     [Service_Index_Access] != 'NA'AND
+	 [Own_Household_Land] != 'NA' AND
+	 [Own_House] != 'NA';
+
+--Criteria 2: Education access
+CREATE VIEW Education_Access AS
+SELECT
+	[Country],
+	[Child_ID],
+	[Cohort],
+	[Child_Age],
+	[School_Hours],
+	[Eductaion_Level_Child],
+	[Education_Level_Dad],
+	[Education_Level_Mom],
+	[Education_Level_Head]
+FROM [dbo].[Country_Ethiopia]
+WHERE 
+	 [Country] != 'NA' AND
+     [Child_ID] != 'NA' AND
+     [Cohort] != 'NA' AND
+     [Child_Age] != 'NA' AND
+     [School_Hours] != 'NA' AND
+     [Eductaion_Level_Child] != 'NA' AND
+     [Education_Level_Dad] != 'NA'AND
+	 [Education_Level_Mom] != 'NA' AND
+	 [Education_Level_Head] != 'NA'
+UNION ALL
+SELECT 
+	[Country],
+	[Child_ID],
+	[Cohort],
+	[Child_Age],
+	[Wealth_Index],
+	[Housing_Quality_Index],
+	[Service_Index_Access],
+	[Own_Household_Land],
+	[Own_House]
+FROM [dbo].[Country_Vietnam]
+WHERE 
+	 [Country] != 'NA' AND
+     [Child_ID] != 'NA' AND
+     [Cohort] != 'NA' AND
+     [Child_Age] != 'NA' AND
+     [School_Hours] != 'NA' AND
+     [Eductaion_Level_Child] != 'NA' AND
+     [Education_Level_Dad] != 'NA'AND
+	 [Education_Level_Mom] != 'NA' AND
+	 [Education_Level_Head] != 'NA';
+
+--Criteria 3: Health Expenditure per child
+CREATE VIEW Child_Health_Expenditure AS
+SELECT
+	[Country],
+	[Child_ID],
+	[Cohort],
+	[Child_Age],
+	[Child_Health_1],
+	[Child_Health_2],
+	[Child_Health_3],
+	[Child_Health_4],
+	[Child_Health_General]
+FROM [dbo].[Country_Ethiopia]
+WHERE 
+	 [Country] != 'NA' AND
+     [Child_ID] != 'NA' AND
+     [Cohort] != 'NA' AND
+     [Child_Age] != 'NA' AND
+     [Child_Health_1] != 'NA' AND
+     [Child_Health_2] != 'NA' AND
+     [Child_Health_3] != 'NA'AND
+	 [Child_Health_4] != 'NA' AND
+	 [Child_Health_General] != 'NA' 
+UNION ALL
+SELECT 
+	[Country],
+	[Child_ID],
+	[Cohort],
+	[Child_Age],
+	[Child_Health_1],
+	[Child_Health_2],
+	[Child_Health_3],
+	[Child_Health_4],
+	[Child_Health_General]
+FROM [dbo].[Country_Vietnam]
+WHERE 
+	 [Country] != 'NA' AND
+     [Child_ID] != 'NA' AND
+     [Cohort] != 'NA' AND
+     [Child_Age] != 'NA' AND
+     [Child_Health_1] != 'NA' AND
+     [Child_Health_2] != 'NA' AND
+     [Child_Health_3] != 'NA'AND
+	 [Child_Health_4] != 'NA' AND
+	 [Child_Health_General] != 'NA';
+
+--Criteria 4: Living Standards: access to clean water
+CREATE VIEW Living_Standard AS
+SELECT
+	[Country],
+	[Child_ID],
+	[Cohort],
+	[Child_Age],
+	[Water_Quality]
+FROM [dbo].[Country_Ethiopia]
+WHERE 
+	 [Country] != 'NA' AND
+     [Child_ID] != 'NA' AND
+     [Cohort] != 'NA' AND
+     [Child_Age] != 'NA' AND
+     [Water_Quality] != 'NA'
+UNION ALL
+SELECT
+	[Country],
+	[Child_ID],
+	[Cohort],
+	[Child_Age],
+	[Water_Quality]
+FROM [dbo].[Country_Vietnam]
+WHERE 
+	 [Country] != 'NA' AND
+     [Child_ID] != 'NA' AND
+     [Cohort] != 'NA' AND
+     [Child_Age] != 'NA' AND
+     [Water_Quality] != 'NA';
+
+--Criteria 5: Malnutrition Rate
+CREATE VIEW Malnutrition_Rate AS
+SELECT
+	[Country],
+	[Child_ID],
+	[Cohort],
+	[Child_Age],
+	[Child_Weight],
+	[Child_Height],
+	[Child_BMI],
+	[Child_Underweight]
+FROM [dbo].[Country_Ethiopia]
+WHERE 
+	 [Country] != 'NA' AND
+     [Child_ID] != 'NA' AND
+     [Cohort] != 'NA' AND
+     [Child_Age] != 'NA' AND
+     [Child_Weight] != 'NA'AND
+	 [Child_Height] != 'NA'AND
+	 [Child_BMI] != 'NA'AND
+	 [Child_Underweight] != 'NA'
+UNION ALL
+SELECT
+	[Country],
+	[Child_ID],
+	[Cohort],
+	[Child_Age],
+	[Child_Weight],
+	[Child_Height],
+	[Child_BMI],
+	[Child_Underweight]
+FROM [dbo].[Country_Vietnam]
+WHERE 
+	 [Country] != 'NA' AND
+     [Child_ID] != 'NA' AND
+     [Cohort] != 'NA' AND
+     [Child_Age] != 'NA' AND
+     [Child_Weight] != 'NA'AND
+	 [Child_Height] != 'NA'AND
+	 [Child_BMI] != 'NA'AND
+	 [Child_Underweight] != 'NA';
